@@ -28,7 +28,7 @@
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
   }
   
-  .pool {
+.pool {
     background: linear-gradient(to bottom, #7dd3fc 0%, #38bdf8 35%, #0284c8 100%);
     border: 6px solid #bae6fd;
     border-radius: 24px;
@@ -36,6 +36,38 @@
     position: relative;
     overflow: hidden;
   }
+
+  /* Pool depth markers */
+  .pool-depth-markers {
+    position: absolute;
+    left: 8px;
+    top: 36px;
+    bottom: 16px;
+    width: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    pointer-events: none;
+  }
+  .pool-depth-marker {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.7);
+    text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+  }
+  .pool-depth-marker .line {
+    width: 14px;
+    height: 2px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 2px;
+  }
+  .pool-depth-marker.surface { color: rgba(255,255,255,0.9); }
+  .pool-depth-marker.surface .line { background: rgba(255,255,255,0.6); }
+  .pool-depth-marker.bottom { color: rgba(255,255,255,0.9); }
+  .pool-depth-marker.bottom .line { background: rgba(255,255,255,0.6); }
   
   .water-surface {
     position: absolute;
@@ -55,13 +87,61 @@
     border: 1px solid #e0f2fe;
   }
   
-  .floating {
+.floating {
     animation: bob 2.1s ease-in-out infinite;
   }
-  
+
   @keyframes bob {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-10px); }
+  }
+
+  /* Sink animation - item descends and gets darker overlay */
+  .sinking {
+    animation: sinkDown 1.2s ease-in forwards;
+  }
+  @keyframes sinkDown {
+    0% { transform: translateY(0); opacity: 1; }
+    20% { transform: translateY(10px); opacity: 1; }
+    100% { transform: translateY(60px); opacity: 0.85; }
+  }
+
+  /* Dark overlay for sinking items */
+  .pool-item-sink-overlay {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.25);
+    pointer-events: none;
+    animation: sinkOverlayFade 1.2s ease-in forwards;
+  }
+  @keyframes sinkOverlayFade {
+    0% { opacity: 0; }
+    30% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  /* Wobble effect for floating items */
+  .floating.wobble {
+    animation: bob 2.1s ease-in-out infinite, wobble 0.5s ease-in-out 2;
+  }
+  @keyframes wobble {
+    0%, 100% { rotate: 0deg; }
+    25% { rotate: -5deg; }
+    75% { rotate: 5deg; }
+  }
+
+  /* Ripple effect on drop */
+  .ripple {
+    position: absolute;
+    border-radius: 50%;
+    border: 3px solid rgba(255,255,255,0.6);
+    pointer-events: none;
+    animation: rippleExpand 0.8s ease-out forwards;
+  }
+  @keyframes rippleExpand {
+    0% { width: 10px; height: 10px; opacity: 1; transform: translate(-50%, -50%) scale(0); }
+    100% { width: 120px; height: 60px; opacity: 0; transform: translate(-50%, -50%) scale(1); }
   }
   
   .bubble {
@@ -744,8 +824,31 @@
 <div id="pool" class="pool" style="flex: 1; min-height: 480px; cursor: pointer;" role="application" aria-label="實驗水池，容量10個物品"
                ondrop="handleDrop(event)" ondragover="allowDrop(event)">
             <div class="water-surface"></div>
-            <div style="position: absolute; top: 14px; left: 20px; color: #fff; font-size: 15px; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.4);">⬆️ 水面</div>
-            <div style="position: absolute; bottom: 16px; left: 20px; color: #fff; font-size: 15px; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.4);">⬇️ 水底</div>
+            <!-- Depth markers -->
+            <div class="pool-depth-markers" aria-hidden="true">
+              <div class="pool-depth-marker surface">
+                <span class="line"></span>
+                <span>水面</span>
+              </div>
+              <div class="pool-depth-marker">
+                <span class="line"></span>
+                <span>25%</span>
+              </div>
+              <div class="pool-depth-marker">
+                <span class="line"></span>
+                <span>50%</span>
+              </div>
+              <div class="pool-depth-marker">
+                <span class="line"></span>
+                <span>75%</span>
+              </div>
+              <div class="pool-depth-marker bottom">
+                <span class="line"></span>
+                <span>水底</span>
+              </div>
+            </div>
+            <div style="position: absolute; top: 14px; left: 58px; color: #fff; font-size: 15px; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.4);">⬆️ 水面</div>
+            <div style="position: absolute; bottom: 16px; left: 58px; color: #fff; font-size: 15px; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.4);">⬇️ 水底</div>
           </div>
           
           <div style="text-align: center; font-size: 14px; color: #0284c8; margin-top: 12px; font-weight: 600;">
@@ -873,26 +976,26 @@
     const imgPath = 'assets/images/'
     const itemData = [
       // 浮力物品（寫實圖）
-      { name: '木塊', nameEn: 'Wood Block', emoji: '', image: 'wood-block.png', floats: true, density: 0.6, reason: '木頭密度比水低，會浮起來。' },
-      { name: '蘋果', nameEn: 'Apple', emoji: '', image: 'apple.png', floats: true, density: 0.85, reason: '蘋果含有空氣，密度比水小。' },
-      { name: '羽毛', nameEn: 'Feather', emoji: '', image: 'feather.png', floats: true, density: 0.02, reason: '很輕，空氣多，容易浮在水面上。' },
-      { name: '氣球', nameEn: 'Balloon', emoji: '', image: 'balloon.png', floats: true, density: 0.1, reason: '充滿空氣，密度遠低於水。' },
-      { name: '小船', nameEn: 'Boat', emoji: '', image: 'boat.png', floats: true, density: 0.4, reason: '船身形狀排出大量水，產生足夠浮力。' },
-      { name: '橡皮鴨', nameEn: 'Rubber Duck', emoji: '', image: 'rubber-duck.png', floats: true, density: 0.3, reason: '中空又輕盈，容易浮起。' },
-      { name: '香蕉', nameEn: 'Banana', emoji: '🍌', image: null, floats: true, density: 0.9, reason: '含有空氣，密度比水低，所以會浮。' },
-      { name: '軟木塞', nameEn: 'Cork', emoji: '🪵', image: null, floats: true, density: 0.25, reason: '軟木有很多小孔，密度很小。' },
-      { name: '保麗龍', nameEn: 'Styrofoam', emoji: '🧴', image: null, floats: true, density: 0.05, reason: '保麗龍有很多氣泡，密度很低。' },
-      { name: '冰塊', nameEn: 'Ice Cube', emoji: '🧊', image: null, floats: true, density: 0.92, reason: '冰的密度比液態水低，所以浮在水面。' },
-      { name: '乒乓球', nameEn: 'Ping-pong Ball', emoji: '🏓', image: null, floats: true, density: 0.1, reason: '乒乓球很輕，內部是空心的。' },
+{ name: '木塊', nameEn: 'Wood Block', emoji: '', image: 'wood-block.png', floats: true, density: 0.6, reason: '木頭密度比水低，會浮起來。', stars: 1 },
+      { name: '蘋果', nameEn: 'Apple', emoji: '', image: 'apple.png', floats: true, density: 0.85, reason: '蘋果含有空氣，密度比水小。', stars: 1 },
+      { name: '羽毛', nameEn: 'Feather', emoji: '', image: 'feather.png', floats: true, density: 0.02, reason: '很輕，空氣多，容易浮在水面上。', stars: 1 },
+      { name: '氣球', nameEn: 'Balloon', emoji: '', image: 'balloon.png', floats: true, density: 0.1, reason: '充滿空氣，密度遠低於水。', stars: 1 },
+      { name: '小船', nameEn: 'Boat', emoji: '', image: 'boat.png', floats: true, density: 0.4, reason: '船身形狀排出大量水，產生足夠浮力。', stars: 1 },
+      { name: '橡皮鴨', nameEn: 'Rubber Duck', emoji: '', image: 'rubber-duck.png', floats: true, density: 0.3, reason: '中空又輕盈，容易浮起。', stars: 1 },
+      { name: '香蕉', nameEn: 'Banana', emoji: '🍌', image: null, floats: true, density: 0.9, reason: '含有空氣，密度比水低，所以會浮。', stars: 1 },
+      { name: '軟木塞', nameEn: 'Cork', emoji: '🪵', image: null, floats: true, density: 0.25, reason: '軟木有很多小孔，密度很小。', stars: 1 },
+      { name: '保麗龍', nameEn: 'Styrofoam', emoji: '🧴', image: null, floats: true, density: 0.05, reason: '保麗龍有很多氣泡，密度很低。', stars: 1 },
+      { name: '冰塊', nameEn: 'Ice Cube', emoji: '🧊', image: null, floats: true, density: 0.92, reason: '冰的密度比液態水低，所以浮在水面。', stars: 2 },
+      { name: '乒乓球', nameEn: 'Ping-pong Ball', emoji: '🏓', image: null, floats: true, density: 0.1, reason: '乒乓球很輕，內部是空心的。', stars: 1 },
 
       // 下沉物品（寫實圖）
-      { name: '石頭', nameEn: 'Stone', emoji: '', image: 'stone.png', floats: false, density: 2.5, reason: '石頭密度很大，會沉到水底。' },
-      { name: '硬幣', nameEn: 'Coin', emoji: '', image: 'coin.png', floats: false, density: 7.8, reason: '金屬硬幣密度高，體積小。' },
-      { name: '鐵釘', nameEn: 'Iron Nail', emoji: '', image: 'iron-nail.png', floats: false, density: 7.8, reason: '鐵的密度比水大很多。' },
-      { name: '湯匙', nameEn: 'Spoon', emoji: '', image: 'spoon.png', floats: false, density: 7.9, reason: '金屬密度大，體積小，浮力不足以支撐。' },
-      { name: '玻璃珠', nameEn: 'Glass Bead', emoji: '', image: 'glass-bead.png', floats: false, density: 2.5, reason: '玻璃密度高，會沉底。' },
-      { name: '鑰匙', nameEn: 'Key', emoji: '', image: 'key.png', floats: false, density: 7.0, reason: '金屬鑰匙密度高，會沉下去。' },
-      { name: '剪刀', nameEn: 'Scissors', emoji: '✂️', image: null, floats: false, density: 7.5, reason: '金屬製成，密度高，會沉到水底。' }
+      { name: '石頭', nameEn: 'Stone', emoji: '', image: 'stone.png', floats: false, density: 2.5, reason: '石頭密度很大，會沉到水底。', stars: 1 },
+      { name: '硬幣', nameEn: 'Coin', emoji: '', image: 'coin.png', floats: false, density: 7.8, reason: '金屬硬幣密度高，體積小。', stars: 3 },
+      { name: '鐵釘', nameEn: 'Iron Nail', emoji: '', image: 'iron-nail.png', floats: false, density: 7.8, reason: '鐵的密度比水大很多。', stars: 3 },
+      { name: '湯匙', nameEn: 'Spoon', emoji: '', image: 'spoon.png', floats: false, density: 7.9, reason: '金屬密度大，體積小，浮力不足以支撐。', stars: 2 },
+      { name: '玻璃珠', nameEn: 'Glass Bead', emoji: '', image: 'glass-bead.png', floats: false, density: 2.5, reason: '玻璃密度高，會沉底。', stars: 2 },
+      { name: '鑰匙', nameEn: 'Key', emoji: '', image: 'key.png', floats: false, density: 7.0, reason: '金屬鑰匙密度高，會沉下去。', stars: 2 },
+      { name: '剪刀', nameEn: 'Scissors', emoji: '✂️', image: null, floats: false, density: 7.5, reason: '金屬製成，密度高，會沉到水底。', stars: 2 }
     ]
 
     let experimentCount = 0
@@ -959,6 +1062,7 @@ function createItemCard(item) {
         <div style="font-size: 13px; margin-top: 4px; font-weight: 600; color: ${item.floats ? '#059669' : '#e11d48'};">
           ${item.floats ? '會浮' : '會沉'}
         </div>
+        ${item.stars ? `<div style="font-size:12px; margin-top:2px; color:#f59e0b;">${'⭐'.repeat(item.stars)}</div>` : ''}
       `
       const handleCardActivation = () => {
         if (currentMode === 'free') {
@@ -986,7 +1090,7 @@ function createItemCard(item) {
       })
     }
 
-    function addToPool(item) {
+function addToPool(item) {
       const pool = document.getElementById('pool')
 
       const el = document.createElement('div')
@@ -1008,10 +1112,23 @@ function createItemCard(item) {
 
       if (item.floats) {
         el.classList.add('floating')
+        // Add wobble effect on entry
+        el.classList.add('wobble')
+        setTimeout(() => el.classList.remove('wobble'), 1000)
+      } else {
+        el.classList.add('sinking')
+        // Add dark overlay for sinking items
+        const overlay = document.createElement('div')
+        overlay.className = 'pool-item-sink-overlay'
+        el.style.position = 'relative'
+        el.appendChild(overlay)
       }
 
       pool.appendChild(el)
       poolItems.push(el)
+
+      // Create ripple effect at drop point
+      createRipple(pool, el)
 
       setTimeout(() => createBubbles(el, item.floats), 80)
 
@@ -1025,7 +1142,7 @@ function createItemCard(item) {
       updatePoolCount()
       recordExperiment(item)
       
-el.style.transform = 'scale(0.5)'
+      el.style.transform = 'scale(0.5)'
       setTimeout(() => {
         el.style.transform = 'scale(1)'
       }, 50)
@@ -1036,6 +1153,74 @@ el.style.transform = 'scale(0.5)'
       
       // Check for milestone celebration
       checkMilestone(experimentCount)
+    }
+
+    function playWaterSplash() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+        const osc = audioCtx.createOscillator()
+        const noise = audioCtx.createOscillator()
+        const gain = audioCtx.createGain()
+        const noiseGain = audioCtx.createGain()
+
+        // Splash noise
+        noise.type = 'sawtooth'
+        noise.frequency.setValueAtTime(400, audioCtx.currentTime)
+        noise.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.15)
+        noiseGain.gain.setValueAtTime(0.08, audioCtx.currentTime)
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2)
+        noise.connect(noiseGain)
+        noiseGain.connect(audioCtx.destination)
+        noise.start()
+        noise.stop(audioCtx.currentTime + 0.2)
+      } catch(e) { /* Audio not supported */ }
+    }
+
+    function playCelebrationFanfare() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+        const notes = [523.25, 659.25, 783.99, 1046.50] // C5, E5, G5, C6
+        notes.forEach((freq, i) => {
+          const osc = audioCtx.createOscillator()
+          const gain = audioCtx.createGain()
+          osc.connect(gain)
+          gain.connect(audioCtx.destination)
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime + i * 0.08)
+          gain.gain.setValueAtTime(0.15, audioCtx.currentTime + i * 0.08)
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i * 0.08 + 0.3)
+          osc.start(audioCtx.currentTime + i * 0.08)
+          osc.stop(audioCtx.currentTime + i * 0.08 + 0.3)
+        })
+      } catch(e) { /* Audio not supported */ }
+    }
+
+    function playErrorSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+        const osc = audioCtx.createOscillator()
+        const gain = audioCtx.createGain()
+        osc.connect(gain)
+        gain.connect(audioCtx.destination)
+        osc.type = 'sine'
+        osc.frequency.setValueAtTime(200, audioCtx.currentTime)
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime + 0.1)
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime)
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2)
+        osc.start()
+        osc.stop(audioCtx.currentTime + 0.2)
+      } catch(e) { /* Audio not supported */ }
+    }
+
+    function createRipple(pool, itemEl) {
+      const ripple = document.createElement('div')
+      ripple.className = 'ripple'
+      const rect = itemEl.getBoundingClientRect()
+      const poolRect = pool.getBoundingClientRect()
+      ripple.style.left = `${rect.left - poolRect.left + rect.width / 2}px`
+      ripple.style.top = `${rect.top - poolRect.top + rect.height / 2}px`
+      pool.appendChild(ripple)
+      setTimeout(() => ripple.remove(), 800)
+      playWaterSplash()
     }
 
     function createBubbles(parentEl, isFloat) {
@@ -1221,10 +1406,16 @@ el.style.transform = 'scale(0.5)'
       `
     }
 
-    function makePrediction(isFloatPrediction) {
+function makePrediction(isFloatPrediction) {
       const item = quizItems[currentQuizIndex]
       const isCorrect = (item.floats === isFloatPrediction)
-      if (isCorrect) quizScore++
+      if (isCorrect) {
+        quizScore++
+        updateComboAndScore()
+        playCelebrationFanfare()
+      } else {
+        playErrorSound()
+      }
       
       addToPool(item)
       
@@ -1659,7 +1850,10 @@ quizTimerInterval = setInterval(() => {
       
       // Spawn confetti particles
       spawnConfetti()
-      
+
+      // Play celebration fanfare
+      playCelebrationFanfare()
+
       // Auto-dismiss after 4 seconds if no interaction
       splash.autoTimeout = setTimeout(() => dismissMilestone(splash.querySelector('button')), 4000)
     }
@@ -2039,6 +2233,77 @@ quizTimerInterval = setInterval(() => {
       document.getElementById('achievements-panel').style.display = 'block'
     }
 
+// ==================== Quiz Difficulty Levels ====================
+    let quizDifficulty = 'easy' // 'easy', 'medium', 'hard'
+
+    function setQuizDifficulty(level) {
+      quizDifficulty = level
+      const btns = document.querySelectorAll('.difficulty-btn')
+      btns.forEach(btn => {
+        btn.style.background = btn.dataset.level === level ? '#0284c8' : '#e0f2fe'
+        btn.style.color = btn.dataset.level === level ? 'white' : '#0369a1'
+      })
+      // Update quiz if in progress
+      if (currentMode === 'quiz' && currentQuizIndex < quizItems.length) {
+        showQuizQuestion()
+      }
+    }
+
+    function getQuizChoices(item, difficulty) {
+      const allItems = itemData
+
+      if (difficulty === 'easy') {
+        // 2 choices: definitely correct + wrong
+        return [
+          { text: '會浮', correct: item.floats, icon: '🟢' },
+          { text: '會沉', correct: !item.floats, icon: '🔴' }
+        ]
+      }
+
+      // For medium/hard, we need plausible wrong options
+      const floatItems = allItems.filter(i => i.floats && i.name !== item.name)
+      const sinkItems = allItems.filter(i => !i.floats && i.name !== item.name)
+
+      if (difficulty === 'medium') {
+        const wrongFloat = floatItems[Math.floor(Math.random() * floatItems.length)]
+        const choices = [
+          { text: '會浮', correct: item.floats, icon: '🟢' },
+          { text: '會沉', correct: !item.floats, icon: '🔴' }
+        ]
+        // Add a trap answer
+        choices.push(item.floats
+          ? { text: '會浮（但不確定）', correct: true, icon: '🟡' }
+          : { text: '會沉（金屬一定沉）', correct: !item.floats, icon: '🟡' }
+        )
+        return choices.sort(() => Math.random() - 0.5)
+      }
+
+      // Hard: 4 choices with density comparison
+      if (difficulty === 'hard') {
+        return [
+          { text: '會浮', correct: item.floats, icon: '🟢', sub: '密度 ' + item.density + ' g/cm³' },
+          { text: '會沉', correct: !item.floats, icon: '🔴', sub: '密度 ' + item.density + ' g/cm³' },
+          { text: item.floats ? '會浮' : '會沉', correct: item.floats, icon: item.floats ? '🟢' : '🔴', sub: '形狀輔助浮力' },
+          { text: !item.floats ? '會浮' : '會沉', correct: !item.floats, icon: !item.floats ? '🟢' : '🔴', sub: '金屬密度高' }
+        ].sort(() => Math.random() - 0.5).slice(0, 4)
+      }
+
+      return []
+    }
+
+    function renderQuizChoices(item) {
+      const choices = getQuizChoices(item, quizDifficulty)
+      return choices.map((c, i) => `
+        <button onclick="makePrediction(${c.correct})"
+                style="flex:1; max-width:220px; background:${c.correct ? '#10b981' : '#e11d48'}; color:white; padding:18px 12px; border-radius:20px; font-size:18px; font-weight:700; border:none; cursor:pointer; min-height:72px; display:flex; flex-direction:column; align-items:center; gap:4px;"
+                aria-label="預測${c.text}">
+          <span style="font-size:24px;">${c.icon}</span>
+          <span>${c.text}</span>
+          ${c.sub ? `<span style="font-size:11px; opacity:0.85;">${c.sub}</span>` : ''}
+        </button>
+      `).join('')
+    }
+
     // ==================== Quiz Question with TTS ====================
     function showQuizQuestion() {
       const panel = document.getElementById('quiz-panel')
@@ -2049,6 +2314,9 @@ quizTimerInterval = setInterval(() => {
 
       const item = quizItems[currentQuizIndex]
       document.getElementById('quiz-progress-fill').style.width = `${(currentQuizIndex / quizItems.length) * 100}%`
+
+      const difficultyLabels = { easy: '🌱 簡單', medium: '🌿 中等', hard: '🔥 困難' }
+      const choiceCount = quizDifficulty === 'easy' ? 2 : quizDifficulty === 'medium' ? 3 : 4
 
       panel.innerHTML = `
         <div style="text-align:center">
@@ -2061,26 +2329,36 @@ quizTimerInterval = setInterval(() => {
             }).join('')}
           </div>
 
-<button onclick="speakQuizQuestion()" style="padding:10px 18px; border-radius:12px; border:none; font-size:15px; cursor:pointer; background:#fef3c7; color:#92400e; margin-bottom:16px; min-height:48px; font-weight:600;" aria-label="朗讀題目">
+          <!-- Difficulty selector -->
+          <div style="display:flex; gap:8px; justify-content:center; margin-bottom:14px;">
+            <button class="difficulty-btn" data-level="easy" onclick="setQuizDifficulty('easy')"
+                    style="padding:8px 16px; border-radius:9999px; border:none; font-size:13px; font-weight:600; cursor:pointer; background:${quizDifficulty === 'easy' ? '#0284c8' : '#e0f2fe'}; color:${quizDifficulty === 'easy' ? 'white' : '#0369a1'}; min-height:44px;" aria-label="簡單難度">
+              🌱 簡單
+            </button>
+            <button class="difficulty-btn" data-level="medium" onclick="setQuizDifficulty('medium')"
+                    style="padding:8px 16px; border-radius:9999px; border:none; font-size:13px; font-weight:600; cursor:pointer; background:${quizDifficulty === 'medium' ? '#0284c8' : '#e0f2fe'}; color:${quizDifficulty === 'medium' ? 'white' : '#0369a1'}; min-height:44px;" aria-label="中等難度">
+              🌿 中等
+            </button>
+            <button class="difficulty-btn" data-level="hard" onclick="setQuizDifficulty('hard')"
+                    style="padding:8px 16px; border-radius:9999px; border:none; font-size:13px; font-weight:600; cursor:pointer; background:${quizDifficulty === 'hard' ? '#0284c8' : '#e0f2fe'}; color:${quizDifficulty === 'hard' ? 'white' : '#0369a1'}; min-height:44px;" aria-label="困難難度">
+              🔥 困難
+            </button>
+          </div>
+
+<button onclick="speakQuizQuestion()" style="padding:10px 18px; border-radius:12px; border:none; font-size:15px; cursor:pointer; background:#fef3c7; color:#92400e; margin-bottom:14px; min-height:48px; font-weight:600;" aria-label="朗讀題目">
             🔊 朗讀題目
           </button>
 
-          <div style="display:inline-block; background:#fef3c7; color:#b45309; padding:6px 16px; border-radius:9999px; font-size:14px; margin-bottom:14px; font-weight:600;">測驗挑戰模式</div>
+          <div style="display:inline-block; background:#fef3c7; color:#b45309; padding:6px 16px; border-radius:9999px; font-size:14px; margin-bottom:12px; font-weight:600;">${difficultyLabels[quizDifficulty]} · ${choiceCount}選項</div>
           <div style="color:#64748b; margin-bottom:6px; font-size:16px;">第 ${currentQuizIndex + 1} / 5 題</div>
-          <div id="quiz-question-text" style="font-size:22px; font-weight:700; color:#1e2937; margin-bottom:18px;">你覺得這個物品會浮還是會沉？</div>
+          <div id="quiz-question-text" style="font-size:22px; font-weight:700; color:#1e2937; margin-bottom:16px;">你覺得這個物品會浮還是會沉？</div>
 
-          <div style="font-size:80px; margin:16px 0;">${item.emoji}</div>
-          <div style="font-size:26px; font-weight:700; color:#0369a1; margin-bottom:28px;">${item.name}</div>
+          <div style="font-size:80px; margin:14px 0;">${item.emoji}</div>
+          <div style="font-size:26px; font-weight:700; color:#0369a1; margin-bottom:8px;">${item.name}</div>
+          ${item.stars ? `<div style="font-size:16px; color:#f59e0b; margin-bottom:16px;">${'⭐'.repeat(item.stars)} 驚奇度</div>` : '<div style="margin-bottom:16px;"></div>'}
 
-          <div style="display:flex; gap:18px; justify-content:center;">
-            <button id="btn-float" onclick="makePrediction(true); speakOption('會浮起來')"
-                    style="flex:1; max-width:200px; background:#10b981; color:white; padding:20px 0; border-radius:22px; font-size:22px; font-weight:700; border:none; cursor:pointer; min-height:72px;" aria-label="預測會浮起來">
-              🟢 會浮起來
-            </button>
-            <button id="btn-sink" onclick="makePrediction(false); speakOption('會沉下去')"
-                    style="flex:1; max-width:200px; background:#e11d48; color:white; padding:20px 0; border-radius:22px; font-size:22px; font-weight:700; border:none; cursor:pointer; min-height:72px;" aria-label="預測會沉下去">
-              🔴 會沉下去
-            </button>
+          <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
+            ${renderQuizChoices(item)}
           </div>
         </div>
       `
@@ -2089,8 +2367,6 @@ quizTimerInterval = setInterval(() => {
         setTimeout(() => speakQuizQuestion(item), 500)
       }
     }
-
-    function updateLabels() { }
 
 function toggleReducedMotion() {
       document.body.classList.toggle('reduce-motion')
