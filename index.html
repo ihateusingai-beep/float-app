@@ -549,6 +549,10 @@
           <span id="milestone-badge-icon">🎯</span>
           <span id="milestone-badge-text">0/5</span>
         </div>
+        <!-- Achievement notification dot -->
+        <button id="achievement-notify-btn" onclick="showAchievementsPanel()" style="display:none; position:relative; background:#fef3c7; border:2px solid #f59e0b; border-radius:12px; padding:6px 14px; font-size:13px; font-weight:700; color:#92400e; cursor:pointer; min-height:44px;" aria-label="查看成就">
+          🏆 新成就
+        </button>
       </div>
       
 <!-- Consolidated Toolbar -->
@@ -1913,9 +1917,39 @@ quizTimerInterval = setInterval(() => {
           showAchievementToast(def.icon, '🏆 成就解鎖', def.name)
           // Auto-show achievements panel briefly (flash it)
           flashAchievementsPanel()
+          // Flash the achievement notification button
+          flashAchievementNotifyBtn(def.icon + ' ' + def.name)
         }
       }
       renderAchievements()
+    }
+    
+    function flashAchievementNotifyBtn(text) {
+      const btn = document.getElementById('achievement-notify-btn')
+      if (!btn) return
+      btn.style.display = 'flex'
+      btn.style.alignItems = 'center'
+      btn.style.gap = '6px'
+      btn.textContent = text
+      btn.style.animation = 'none'
+      btn.offsetHeight
+      btn.style.animation = 'achievement-flash 0.5s ease-out 3'
+      
+      if (!document.getElementById('achievement-flash-style')) {
+        const style = document.createElement('style')
+        style.id = 'achievement-flash-style'
+        style.textContent = `
+          @keyframes achievement-flash {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+          }
+        `
+        document.head.appendChild(style)
+      }
+      
+      setTimeout(() => {
+        btn.style.display = 'none'
+      }, 4000)
     }
     
     function flashAchievementsPanel() {
