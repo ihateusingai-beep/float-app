@@ -143,6 +143,153 @@
     from { transform: translateX(-50%) translateY(0); opacity: 1; }
     to { transform: translateX(-50%) translateY(-120px); opacity: 0; }
   }
+  
+  /* Milestone Splash Celebration */
+  .milestone-splash {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0, 0, 0, 0.7) !important;
+    z-index: 99999 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    animation: splash-in 0.3s ease-out forwards !important;
+  }
+  .milestone-splash.hide {
+    animation: splash-out 0.5s ease-in forwards !important;
+  }
+  @keyframes splash-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes splash-out {
+    from { opacity: 1; }
+    to { opacity: 0; }
+  }
+  .milestone-card {
+    background: linear-gradient(135deg, #fef3c7, #fff7ed) !important;
+    border-radius: 32px !important;
+    padding: 40px 48px !important;
+    text-align: center !important;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3) !important;
+    border: 4px solid #f59e0b !important;
+    animation: milestone-pop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+  }
+  @keyframes milestone-pop {
+    0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+    60% { transform: scale(1.1) rotate(3deg); }
+    100% { transform: scale(1) rotate(0deg); opacity: 1; }
+  }
+  .milestone-card .emoji {
+    font-size: 80px !important;
+    animation: bounce-emoji 0.6s ease-in-out 3 !important;
+    display: block !important;
+    margin-bottom: 16px !important;
+  }
+  @keyframes bounce-emoji {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+  .milestone-card .title {
+    font-size: 18px !important;
+    color: #b45309 !important;
+    font-weight: 600 !important;
+    margin-bottom: 6px !important;
+  }
+  .milestone-card .name {
+    font-size: 32px !important;
+    font-weight: 700 !important;
+    color: #92400e !important;
+    margin-bottom: 8px !important;
+  }
+  .milestone-card .sub {
+    font-size: 14px !important;
+    color: #78716c !important;
+  }
+  .milestone-card button {
+    margin-top: 20px !important;
+    padding: 12px 32px !important;
+    border-radius: 16px !important;
+    border: none !important;
+    background: #f59e0b !important;
+    color: white !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    cursor: pointer !important;
+    min-height: 52px !important;
+  }
+  
+  /* First-time user hint arrow */
+  .hint-arrow {
+    position: absolute !important;
+    z-index: 500 !important;
+    animation: point-pool 1.5s ease-in-out infinite !important;
+    pointer-events: none !important;
+  }
+  @keyframes point-pool {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.9; }
+    50% { transform: translateY(-12px) scale(1.08); opacity: 1; }
+  }
+  .hint-bubble {
+    position: fixed !important;
+    bottom: 140px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    background: white !important;
+    border: 3px solid #0284c8 !important;
+    border-radius: 20px !important;
+    padding: 12px 20px !important;
+    box-shadow: 0 8px 24px rgba(2,132,199,0.2) !important;
+    z-index: 500 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 10px !important;
+    animation: hint-pulse 2s ease-in-out infinite !important;
+  }
+  @keyframes hint-pulse {
+    0%, 100% { box-shadow: 0 8px 24px rgba(2,132,199,0.2); }
+    50% { box-shadow: 0 8px 32px rgba(2,132,199,0.4); }
+  }
+  .hint-bubble .arrow {
+    font-size: 24px !important;
+    animation: arrow-bounce 0.8s ease-in-out infinite !important;
+  }
+  @keyframes arrow-bounce {
+    0%, 100% { transform: translateX(0); }
+    50% { transform: translateX(8px); }
+  }
+  .hint-bubble .text {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    color: #0369a1 !important;
+  }
+  
+  /* Demo Mode Banner */
+  .demo-banner {
+    background: linear-gradient(90deg, #7c3aed, #6d28d9) !important;
+    color: white !important;
+    padding: 10px 20px !important;
+    text-align: center !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 12px !important;
+  }
+  .demo-banner .step-indicator {
+    background: rgba(255,255,255,0.2) !important;
+    padding: 4px 12px !important;
+    border-radius: 9999px !important;
+    font-size: 12px !important;
+  }
+  .demo-step-highlight {
+    animation: demo-glow 1.5s ease-in-out infinite !important;
+  }
+  @keyframes demo-glow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(2,132,199,0); }
+    50% { box-shadow: 0 0 0 8px rgba(2,132,199,0.3); }
+  }
   .achievement-toast .icon { font-size: 36px !important; }
   .achievement-toast .text { text-align: left !important; }
   .achievement-toast .title { font-size: 13px !important; color: #64748b !important; margin-bottom: 2px !important; }
@@ -419,6 +566,9 @@
             <button onclick="toggleTeacherMode(); toggleToolbarOverflow();" id="btn-teacher-mode">
               👩‍🏫 教師模式
             </button>
+            <button onclick="startDemoMode(); toggleToolbarOverflow();" id="btn-demo-mode">
+              🎬 教師示範
+            </button>
             <button onclick="toggleTeacherDashboard(); toggleToolbarOverflow();" id="btn-dashboard" style="display:none;">
               📊 教師數據面板
             </button>
@@ -430,6 +580,12 @@
             </button>
             <button onclick="openTeacherModal(); toggleToolbarOverflow();" id="btn-teacher-modal">
               👨‍🏫 老師工具面板
+            </button>
+            <button onclick="toggleWhatNextHint(); toggleToolbarOverflow();" id="btn-what-next">
+              💡 下一步提示
+            </button>
+            <button onclick="showAchievementsPanel(); toggleToolbarOverflow();" id="btn-show-achievements">
+              🏆 成就面板
             </button>
           </div>
         </div>
@@ -537,6 +693,13 @@
         </div>
         
         <div id="items-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; max-height: 520px; overflow-y: auto; padding-right: 6px;"></div>
+        
+        <!-- Zhang Jun Bao Voice Button -->
+        <button id="voice-select-btn" onclick="toggleZhangJunBaoVoiceInput()"
+                style="margin-top: 14px; width: 100%; background: #7c3aed; color: white; font-weight: 700; padding: 14px 0; border-radius: 18px; border: none; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer; min-height: 52px;"
+                aria-label="語音選擇物品">
+          🎤 張鈞保語音
+        </button>
         
 <button onclick="clearPool()"
                 style="margin-top: 18px; width: 100%; background: #e11d48; color: white; font-weight: 700; padding: 14px 0; border-radius: 18px; border: none; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;" aria-label="清空水池">
@@ -861,6 +1024,9 @@ el.style.transform = 'scale(0.5)'
       // SEN feedback: announce result via screen reader
       const resultText = item.floats ? '浮起來了' : '沉下去了'
       announceToScreenReader(`${item.name}，${resultText}`)
+      
+      // Check for milestone celebration
+      checkMilestone(experimentCount)
     }
 
     function createBubbles(parentEl, isFloat) {
@@ -1393,13 +1559,303 @@ quizTimerInterval = setInterval(() => {
     const ACHIEVEMENT_DEFS = [
       { id: 'first_login', name: '初次登入', icon: '👋', condition: '完成首次登入' },
       { id: 'quiz_complete', name: '初級科學家', icon: '🔬', condition: '完成首次測驗' },
-{ id: 'perfect_score', name: '浮力探索者', icon: '🌟', condition: '5題全對' },
+      { id: 'perfect_score', name: '浮力探索者', icon: '🌟', condition: '5題全對' },
       { id: 'speed_star', name: '速度之星', icon: '⚡', condition: '2分鐘內完成測驗' },
       { id: 'voice_note', name: '語音筆記者', icon: '🎤', condition: '記錄第一條語音筆記' },
-      { id: 'experiment_count', name: '實驗愛好者', icon: '🔭', condition: '完成10次實驗' }
+      { id: 'first_experiment', name: '初次實驗', icon: '🌟', condition: '完成第一次實驗' },
+      { id: 'five_experiments', name: '實驗小達人', icon: '🎉', condition: '完成5次實驗' },
+      { id: 'ten_experiments', name: '浮力探索家', icon: '🏆', condition: '完成10次實驗' },
+      { id: 'twenty_experiments', name: '實驗冠軍', icon: '🚀', condition: '完成20次實驗' }
     ]
 
-function updateAchievements(id) {
+    // ==================== Milestone Celebration ====================
+    const MILESTONES = [
+      { count: 1, emoji: '🌟', title: '第一次實驗！', name: '好的開始！', sub: '你完成了第一次實驗' },
+      { count: 5, emoji: '🎉', title: '實驗小達人', name: '5次實驗完成！', sub: '你已經測試了5個物品' },
+      { count: 10, emoji: '🏆', title: '浮力探索家', name: '10次實驗！', sub: '你是小小科學家了！' },
+      { count: 20, emoji: '🚀', title: '實驗冠軍', name: '20次實驗！', sub: '太厲害了！繼續探索！' }
+    ]
+
+    function checkMilestone(totalExperiments) {
+      const milestone = MILESTONES.find(m => m.count === totalExperiments)
+      if (!milestone) return
+      
+      const splash = document.createElement('div')
+      splash.className = 'milestone-splash'
+      splash.innerHTML = `
+        <div class="milestone-card">
+          <span class="emoji">${milestone.emoji}</span>
+          <div class="title">${milestone.title}</div>
+          <div class="name">${milestone.name}</div>
+          <div class="sub">${milestone.sub}</div>
+          <button onclick="dismissMilestone(this)" aria-label="繼續實驗">繼續實驗 ✨</button>
+        </div>
+      `
+      document.body.appendChild(splash)
+      
+      // Play celebration sound if available
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)()
+        const osc = audioCtx.createOscillator()
+        const gain = audioCtx.createGain()
+        osc.connect(gain)
+        gain.connect(audioCtx.destination)
+        osc.frequency.setValueAtTime(523.25, audioCtx.currentTime) // C5
+        osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1) // E5
+        osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2) // G5
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime)
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.5)
+        osc.start()
+        osc.stop(audioCtx.currentTime + 0.5)
+      } catch(e) { /* Audio not supported */ }
+      
+      // Auto-dismiss after 4 seconds if no interaction
+      splash.autoTimeout = setTimeout(() => dismissMilestone(splash.querySelector('button')), 4000)
+    }
+
+    function dismissMilestone(btn) {
+      const splash = document.querySelector('.milestone-splash')
+      if (!splash) return
+      const timeout = splash.autoTimeout
+      if (timeout) clearTimeout(timeout)
+      splash.classList.add('hide')
+      setTimeout(() => splash.remove(), 500)
+    }
+
+    // ==================== First-Time User Hint ====================
+    function showFirstTimeHint() {
+      const history = loadFromLocalStorage('float-history') || []
+      if (history.length > 0) return // Not first time
+      
+      const hint = document.createElement('div')
+      hint.className = 'hint-bubble'
+      hint.id = 'first-time-hint'
+      hint.innerHTML = `
+        <span class="arrow">👈</span>
+        <span class="text">點擊左邊的物品放入水池試試！</span>
+      `
+      document.body.appendChild(hint)
+      
+      // Also add animated arrow pointing to pool
+      const poolArea = document.getElementById('items-grid')
+      if (poolArea) {
+        const arrow = document.createElement('div')
+        arrow.className = 'hint-arrow'
+        arrow.id = 'hint-arrow'
+        arrow.innerHTML = `<div style="font-size:48px;">➡️</div>`
+        arrow.style.position = 'fixed'
+        arrow.style.left = 'calc(33% + 60px)'
+        arrow.style.top = 'calc(50% + 80px)'
+        document.body.appendChild(arrow)
+      }
+      
+      // Dismiss on any interaction
+      const dismissHint = () => {
+        const h = document.getElementById('first-time-hint')
+        const a = document.getElementById('hint-arrow')
+        if (h) h.remove()
+        if (a) a.remove()
+        document.removeEventListener('click', dismissHint)
+        document.removeEventListener('touchstart', dismissHint)
+      }
+      setTimeout(() => {
+        document.addEventListener('click', dismissHint)
+        document.addEventListener('touchstart', dismissHint)
+      }, 1000)
+    }
+
+    // ==================== Demo Mode (Teacher) ====================
+    let demoMode = false
+    let demoStep = 0
+    const DEMO_STEPS = [
+      { highlight: 'items-grid', message: '👈 選擇左邊的物品' },
+      { highlight: 'pool', message: '🌊 點擊物品放入水池' },
+      { highlight: 'science-knowledge', message: '📘 學習浮力原理' },
+      { highlight: 'btn-quiz', message: '🎯 切換到測驗挑戰' }
+    ]
+
+    function startDemoMode() {
+      demoMode = true
+      demoStep = 0
+      
+      // Add banner
+      const banner = document.createElement('div')
+      banner.className = 'demo-banner'
+      banner.id = 'demo-banner'
+      banner.innerHTML = `
+        <span>👩‍🏫 教師示範模式</span>
+        <span class="step-indicator" id="demo-step-indicator">步驟 1 / ${DEMO_STEPS.length}</span>
+        <span id="demo-message" style="flex:1;">${DEMO_STEPS[0].message}</span>
+        <button onclick="nextDemoStep()" style="background:rgba(255,255,255,0.2);border:none;color:white;padding:6px 14px;border-radius:8px;font-weight:600;cursor:pointer;min-height:36px;font-size:13px;" aria-label="下一步">下一步 →</button>
+        <button onclick="exitDemoMode()" style="background:rgba(255,255,255,0.1);border:none;color:rgba(255,255,255,0.8);padding:6px 14px;border-radius:8px;font-weight:600;cursor:pointer;min-height:36px;font-size:13px;" aria-label="退出示範">✕ 退出</button>
+      `
+      document.body.prepend(banner)
+      
+      highlightDemoStep(0)
+      announceToScreenReader('教師示範模式已開啟')
+    }
+
+    function nextDemoStep() {
+      // Remove previous highlight
+      clearDemoHighlights()
+      
+      demoStep++
+      if (demoStep >= DEMO_STEPS.length) {
+        exitDemoMode()
+        return
+      }
+      
+      document.getElementById('demo-step-indicator').textContent = `步驟 ${demoStep + 1} / ${DEMO_STEPS.length}`
+      document.getElementById('demo-message').textContent = DEMO_STEPS[demoStep].message
+      highlightDemoStep(demoStep)
+      announceToScreenReader(DEMO_STEPS[demoStep].message)
+    }
+
+    function highlightDemoStep(step) {
+      const target = document.getElementById(DEMO_STEPS[step].highlight)
+      if (target) {
+        target.classList.add('demo-step-highlight')
+        target.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+    }
+
+    function clearDemoHighlights() {
+      document.querySelectorAll('.demo-step-highlight').forEach(el => el.classList.remove('demo-step-highlight'))
+    }
+
+    function exitDemoMode() {
+      demoMode = false
+      clearDemoHighlights()
+      const banner = document.getElementById('demo-banner')
+      if (banner) banner.remove()
+      announceToScreenReader('教師示範模式已退出')
+    }
+
+    // ==================== What-Next Hint ====================
+    function toggleWhatNextHint() {
+      const existing = document.getElementById('what-next-hint')
+      if (existing) {
+        existing.remove()
+        return
+      }
+      
+      const history = loadFromLocalStorage('float-history') || []
+      const quizResults = loadFromLocalStorage('float-quiz-results') || []
+      const achievements = loadFromLocalStorage('float-achievements') || []
+      
+      let hintText = ''
+      if (history.length === 0) {
+        hintText = '👈 點擊左邊的物品放入水池，開始實驗！'
+      } else if (history.length < 5) {
+        hintText = `🔬 你已做了 ${history.length} 次實驗，再做 ${5 - history.length} 次就能解鎖成就！`
+      } else if (achievements.length < 3) {
+        hintText = '🎯 嘗試挑戰測驗模式，贏取更多成就！'
+      } else if (quizResults.length === 0) {
+        hintText = '📝 去自由實驗探索更多物品吧！'
+      } else {
+        hintText = '🏆 去看看成就面板，慶祝你的成果！'
+      }
+      
+      const hint = document.createElement('div')
+      hint.id = 'what-next-hint'
+      hint.style.cssText = 'position:fixed;bottom:120px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#fef3c7,#fff7ed);border:3px solid #f59e0b;border-radius:20px;padding:14px 22px;z-index:500;font-size:14px;color:#92400e;font-weight:600;text-align:center;box-shadow:0 8px 24px rgba(245,158,11,0.25);max-width:320px;'
+      hint.textContent = hintText
+      document.body.appendChild(hint)
+      
+      setTimeout(() => {
+        if (hint.parentNode) hint.remove()
+      }, 5000)
+    }
+
+    function showAchievementsPanel() {
+      const panel = document.getElementById('achievements-panel')
+      if (panel) {
+        panel.style.display = 'block'
+        panel.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        announceToScreenReader('成就面板已開啟')
+      }
+    }
+
+    // ==================== Voice Input for 張鈞保 ====================
+    function initZhangJunBaoVoiceInput() {
+      // Zhang Jun Bao special: voice button to say item name and auto-select
+      if (!('SpeechRecognition' in window) && !('webkitSpeechRecognition' in window)) return
+      
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition
+      const recognition = new SpeechRecognition()
+      recognition.continuous = false
+      recognition.interimResults = false
+      recognition.lang = 'zh-HK'
+      
+      recognition.onresult = (event) => {
+        const text = event.results[0][0].transcript.trim()
+        console.log('[語音] 識別到：', text)
+        
+        // Find matching item by name (partial match)
+        const matchedItem = itemData.find(item => 
+          item.name.includes(text) || text.includes(item.name) ||
+          item.nameEn.toLowerCase().includes(text.toLowerCase())
+        )
+        
+        if (matchedItem) {
+          // Auto-select the item and add to pool
+          announceToScreenReader(`找到${matchedItem.name}，放入水池`)
+          addToPool(matchedItem)
+          
+          // Visual feedback
+          const btn = document.getElementById('voice-select-btn')
+          if (btn) {
+            btn.style.background = '#059669'
+            setTimeout(() => { btn.style.background = '#7c3aed' }, 1500)
+          }
+        } else {
+          announceToScreenReader(`找不到「${text}」，請再說一次`)
+          
+          // Flash the hint bubble to show supported items
+          const hint = document.createElement('div')
+          hint.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:white;border:3px solid #0284c8;border-radius:20px;padding:16px 24px;z-index:99999;font-size:14px;color:#0369a1;font-weight:600;text-align:center;box-shadow:0 8px 24px rgba(0,0,0,0.2);'
+          hint.textContent = `沒有找到「${text}」\n可以說：木塊、蘋果、石頭...`
+          document.body.appendChild(hint)
+          setTimeout(() => hint.remove(), 3000)
+        }
+      }
+      
+      recognition.onerror = (event) => {
+        console.log('[語音錯誤]', event.error)
+        announceToScreenReader('語音辨識失敗')
+      }
+      
+      recognition.onend = () => {
+        const btn = document.getElementById('voice-select-btn')
+        if (btn) {
+          btn.classList.remove('recording')
+          btn.textContent = '🎤 張鈞保語音'
+        }
+      }
+      
+      window._zhangJunBaoRecognition = recognition
+    }
+
+    function toggleZhangJunBaoVoiceInput() {
+      const btn = document.getElementById('voice-select-btn')
+      if (!btn) return
+      
+      if (!window._zhangJunBaoRecognition) {
+        announceToScreenReader('語音功能不支援，請使用 Chrome 或 Edge 瀏覽器')
+        return
+      }
+      
+      if (btn.classList.contains('recording')) {
+        window._zhangJunBaoRecognition.stop()
+      } else {
+        btn.classList.add('recording')
+        btn.textContent = '⏹️ 停止'
+        window._zhangJunBaoRecognition.start()
+        announceToScreenReader('請說出物品名稱')
+      }
+    }
+
+    function updateAchievements(id) {
       let achievements = loadFromLocalStorage('float-achievements') || []
       if (!achievements.find(a => a.id === id)) {
         const def = ACHIEVEMENT_DEFS.find(d => d.id === id)
@@ -1642,10 +2098,13 @@ function toggleReducedMotion() {
         studentGrade: student?.grade || 'N/A'
       })
       saveToLocalStorage('float-history', history.slice(-100))
-      // Check if experiment_count achievement should be unlocked
-      const achievements = loadFromLocalStorage('float-achievements') || []
-      if (history.length >= 10 && !achievements.find(a => a.id === 'experiment_count')) {
-        updateAchievements('experiment_count')
+      
+      // Check milestone achievements
+      const count = history.length
+      const milestoneMap = { 1: 'first_experiment', 5: 'five_experiments', 10: 'ten_experiments', 20: 'twenty_experiments' }
+      const achievementId = milestoneMap[count]
+      if (achievementId) {
+        updateAchievements(achievementId)
       }
     }
 
@@ -1964,16 +2423,20 @@ document.getElementById('keyboard-hint').style.display = teacherMode ? 'block' :
       }
     }
 
-function init() {
+    function init() {
       renderItems()
       updateStats()
       updatePoolCount()
       initTTS()
       initSTT()
+      initZhangJunBaoVoiceInput()
       loadSenSettings()
       initStudentFromStorage()
       renderVoiceNotes()
       renderAchievements()
+      
+      // Show first-time user hint after 1.5s
+      setTimeout(showFirstTimeHint, 1500)
 
       const freeBtn = document.getElementById('btn-free')
       freeBtn.style.background = '#0284c8'
