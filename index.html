@@ -2706,6 +2706,62 @@ document.getElementById('keyboard-hint').style.display = teacherMode ? 'block' :
       announceToScreenReader(teacherMode ? '已開啟教師模式' : '已關閉教師模式')
     }
 
+    function getMisconceptionAnalysis(history) {
+      if (history.length < 3) return '<div style="color:#94a3b8;font-size:12px;">需要更多數據才能分析誤解</div>'
+
+      // Common misconception: heavy things sink, light things float
+      const misconceptions = []
+
+      // Check if user thinks all heavy things sink and light things float
+      const heavyFloats = history.filter(h => h.density > 1 && h.floats)
+      const lightSinks = history.filter(h => h.density < 1 && !h.floats)
+
+      if (heavyFloats.length > 0) {
+        misconceptions.push(`<div style="margin-bottom:8px;"><span style="color:#059669;font-weight:600;">✓</span> 已理解：重的東西（如${heavyFloats[0].item}）也會浮</div>`)
+      }
+
+      if (lightSinks.length > 0) {
+        misconceptions.push(`<div style="margin-bottom:8px;"><span style="color:#059669;font-weight:600;">✓</span> 已理解：輕的東西（如${lightSinks[0].item}）也會沉</div>`)
+      }
+
+      // Check for size misconception (big = sink, small = float)
+      const bigFloats = history.filter(h => h.floats && ['小船', '保麗龍', '氣球'].includes(h.item))
+      if (bigFloats.length > 0) {
+        misconceptions.push(`<div style="margin-bottom:8px;"><span style="color:#10b981;font-weight:600;">🌟</span> 理解大物品也可以浮（小船${bigFloats.length}次）</div>`)
+      }
+
+      // Check if correctly predicts at least 80%
+      const itemCorrect = history.filter(h => {
+        const expectedFloats = h.density < 1
+        return expectedFloats === h.floats
+      })
+      const accuracy = Math.round((itemCorrect.length / history.length) * 100)
+      misconceptions.push(`<div style="margin-top:8px;padding-top:8px;border-top:1px solid #fde68a;font-size:12px;color:#92400e;">準確度：${accuracy}%（${itemCorrect.length}/${history.length}）</div>`)
+
+      return misconceptions.length > 0 ? misconceptions.join('') : '<div style="color:#94a3b8;font-size:12px;">還沒有發現明顯誤解</div>'
+    }
+
+    function getCuriosityRanking(history) {
+      if (history.length < 3) return '<div style="color:#94a3b8;font-size:12px;">需要更多數據</div>'
+
+      const itemCounts = {}
+      history.forEach(h => {
+        itemCounts[h.item] = (itemCounts[h.item] || 0) + 1
+      })
+
+      const sortedItems = Object.entries(itemCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 8)
+
+      return sortedItems.map(([name, count], i) => {
+        const stars = count >= 5 ? '⭐⭐⭐' : count >= 3 ? '⭐⭐' : '⭐'
+        return `<div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid #e9d5ff;font-size:12px;">
+          <span style="color:#6d28d9;font-weight:600;">${i + 1}. ${name}</span>
+          <span style="color:#7c3aed;">${stars} ${count}次</span>
+        </div>`
+      }).join('')
+    }
+
     function toggleTeacherDashboard() {
       const dashboard = document.getElementById('teacher-dashboard')
       const content = document.getElementById('dashboard-content')
@@ -2851,6 +2907,22 @@ document.getElementById('keyboard-hint').style.display = teacherMode ? 'block' :
                   <span style="color: #94a3b8; font-size: 11px;">${h.studentName}</span>
                 </div>
               `).join('') : '<div style="color: #94a3b8; font-size: 13px;">暫無記錄</div>'}
+            </div>
+          </div>
+
+          <!-- Misconception Analysis -->
+          <div style="background: #fef3c7; border-radius: 16px; padding: 16px; border: 2px solid #f59e0b;">
+            <h4 style="margin: 0 0 10px; color: #92400e; font-size: 14px; display: flex; align-items: center; gap: 6px;">🧠 誤解分析</h4>
+            <div style="max-height: 140px; overflow-y: auto;">
+              ${getMisconceptionAnalysis(history)}
+            </div>
+          </div>
+
+          <!-- Item Curiosity Ranking -->
+          <div style="background: #ede9fe; border-radius: 16px; padding: 16px; border: 2px solid #7c3aed;">
+            <h4 style="margin: 0 0 10px; color: #6d28d9; font-size: 14px; display: flex; align-items: center; gap: 6px;">⭐ 物品好奇心排名</h4>
+            <div style="max-height: 140px; overflow-y: auto;">
+              ${getCuriosityRanking(history)}
             </div>
           </div>
         </div>
