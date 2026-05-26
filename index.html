@@ -670,9 +670,9 @@
         <div style="font-size:13px; color:#0284c8; margin-top:14px;">===== 繼續探索科學吧！ =====</div>
       </div>
       <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
-        <button onclick="printCertificate()" style="padding:12px 24px; border-radius:14px; border:none; font-size:14px; font-weight:600; cursor:pointer; background:#0284c8; color:white;">🖨️ 列印</button>
-        <button onclick="shareCertificate()" style="padding:12px 24px; border-radius:14px; border:none; font-size:14px; font-weight:600; cursor:pointer; background:#10b981; color:white;">📤 分享</button>
-        <button onclick="closeCertificate()" style="padding:12px 24px; border-radius:14px; border:none; font-size:14px; font-weight:600; cursor:pointer; background:#e0f2fe; color:#0369a1;">關閉</button>
+<button onclick="printCertificate()" style="padding:12px 24px; border-radius:14px; border:none; font-size:14px; font-weight:600; cursor:pointer; background:#0284c8; color:white;" aria-label="列印證書">🖨️ 列印</button>
+        <button onclick="shareCertificate()" style="padding:12px 24px; border-radius:14px; border:none; font-size:14px; font-weight:600; cursor:pointer; background:#10b981; color:white;" aria-label="分享證書">📤 分享</button>
+        <button onclick="closeCertificate()" style="padding:12px 24px; border-radius:14px; border:none; font-size:14px; font-weight:600; cursor:pointer; background:#e0f2fe; color:#0369a1;" aria-label="關閉證書">關閉</button>
       </div>
     </div>
   </div>
@@ -1024,13 +1024,13 @@
           </div>
           <div style="font-size:22px; font-weight:700; color:#0369a1; margin-bottom:24px;">${item.name}</div>
           
-          <div style="display:flex; gap:14px; justify-content:center;">
-            <button onclick="makePrediction(true)" 
-                    style="flex:1; max-width:150px; background:#10b981; color:white; padding:14px 0; border-radius:18px; font-size:17px; font-weight:700; border:none; cursor:pointer;">
+<div style="display:flex; gap:14px; justify-content:center;">
+            <button onclick="makePrediction(true)"
+                    style="flex:1; max-width:150px; background:#10b981; color:white; padding:14px 0; border-radius:18px; font-size:17px; font-weight:700; border:none; cursor:pointer;" aria-label="預測會浮起來">
               🟢 會浮起來
             </button>
-            <button onclick="makePrediction(false)" 
-                    style="flex:1; max-width:150px; background:#e11d48; color:white; padding:14px 0; border-radius:18px; font-size:17px; font-weight:700; border:none; cursor:pointer;">
+            <button onclick="makePrediction(false)"
+                    style="flex:1; max-width:150px; background:#e11d48; color:white; padding:14px 0; border-radius:18px; font-size:17px; font-weight:700; border:none; cursor:pointer;" aria-label="預測會沉下去">
               🔴 會沉下去
             </button>
           </div>
@@ -1054,8 +1054,8 @@
           <div style="margin-bottom:20px; color:#475569;">
             ${item.name} 其實是 <strong>${item.floats ? '浮起來' : '沉下去'}</strong> 的
           </div>
-          <button onclick="nextQuizQuestion()" 
-                  style="background:#0284c8; color:white; padding:12px 32px; border-radius:16px; font-weight:600; border:none; cursor:pointer; font-size:15px;">
+<button onclick="nextQuizQuestion()"
+                  style="background:#0284c8; color:white; padding:12px 32px; border-radius:16px; font-weight:600; border:none; cursor:pointer; font-size:15px;" aria-label="下一題">
             下一題 →
           </button>
         </div>
@@ -1086,9 +1086,9 @@
           <div style="font-size:15px; color:#64748b; margin-bottom:16px;">用時 ${quizTimeElapsed} 秒</div>
 
           <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
-            <button onclick="showCertificate()" style="padding:12px 26px; background:#f59e0b; color:white; border:none; border-radius:16px; font-weight:600; cursor:pointer;">🏆 查看成就證書</button>
-            <button onclick="location.reload()" style="padding:12px 26px; background:#0284c8; color:white; border:none; border-radius:16px; font-weight:600; cursor:pointer;">再玩一次</button>
-            <button onclick="switchMode('free'); document.getElementById('quiz-panel').style.display='none'" style="padding:12px 26px; background:white; color:#0369a1; border:2px solid #bae6fd; border-radius:16px; font-weight:600; cursor:pointer;">返回自由模式</button>
+<button onclick="showCertificate()" style="padding:12px 26px; background:#f59e0b; color:white; border:none; border-radius:16px; font-weight:600; cursor:pointer;" aria-label="查看成就證書">🏆 查看成就證書</button>
+            <button onclick="location.reload()" style="padding:12px 26px; background:#0284c8; color:white; border:none; border-radius:16px; font-weight:600; cursor:pointer;" aria-label="重新開始">再玩一次</button>
+            <button onclick="switchMode('free'); document.getElementById('quiz-panel').style.display='none'" style="padding:12px 26px; background:white; color:#0369a1; border:2px solid #bae6fd; border-radius:16px; font-weight:600; cursor:pointer;" aria-label="返回自由模式">返回自由模式</button>
           </div>
         </div>
       `
@@ -1364,9 +1364,9 @@ function toggleVoiceNote() {
       document.getElementById('combo-count').textContent = '0'
       comboCount = 0
 
-      quizTimerInterval = setInterval(() => {
+quizTimerInterval = setInterval(() => {
         quizTimeElapsed++
-        const mins = Math.floor(quizAreaElapsed / 60)
+        const mins = Math.floor(quizTimeElapsed / 60)
         const secs = quizTimeElapsed % 60
         document.getElementById('timer-display').textContent = `${mins}:${secs.toString().padStart(2, '0')}`
       }, 1000)
@@ -1465,13 +1465,13 @@ function updateAchievements(id) {
           <div style="font-size:68px; margin:12px 0;">${item.emoji}</div>
           <div style="font-size:22px; font-weight:700; color:#0369a1; margin-bottom:24px;">${item.name}</div>
 
-          <div style="display:flex; gap:14px; justify-content:center;">
-            <button id="btn-float" onclick="makePrediction(true)" onclick="speakOption('會浮起來')"
-                    style="flex:1; max-width:150px; background:#10b981; color:white; padding:14px 0; border-radius:18px; font-size:17px; font-weight:700; border:none; cursor:pointer;">
+<div style="display:flex; gap:14px; justify-content:center;">
+            <button id="btn-float" onclick="makePrediction(true); speakOption('會浮起來')"
+                    style="flex:1; max-width:150px; background:#10b981; color:white; padding:14px 0; border-radius:18px; font-size:17px; font-weight:700; border:none; cursor:pointer;" aria-label="預測會浮起來">
               🟢 會浮起來
             </button>
-            <button id="btn-sink" onclick="makePrediction(false)" onclick="speakOption('會沉下去')"
-                    style="flex:1; max-width:150px; background:#e11d48; color:white; padding:14px 0; border-radius:18px; font-size:17px; font-weight:700; border:none; cursor:pointer;">
+            <button id="btn-sink" onclick="makePrediction(false); speakOption('會沉下去')"
+                    style="flex:1; max-width:150px; background:#e11d48; color:white; padding:14px 0; border-radius:18px; font-size:17px; font-weight:700; border:none; cursor:pointer;" aria-label="預測會沉下去">
               🔴 會沉下去
             </button>
           </div>
