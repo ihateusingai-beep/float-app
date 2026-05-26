@@ -440,7 +440,7 @@
     <div id="teacher-dashboard" style="display:none; background: white; border-radius: 24px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 6px rgb(0 0 0 / 0.1); border: 1px solid #e0f2fe;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
         <h2 style="margin: 0; font-size: 1.3rem; color: #0369a1;">📊 教師數據面板</h2>
-        <button onclick="toggleTeacherDashboard()" style="background: #e11d48; color: white; border: none; padding: 8px 16px; border-radius: 12px; cursor: pointer; font-weight: 600;">✕ 關閉</button>
+        <button onclick="toggleTeacherDashboard()" style="background: #e11d48; color: white; border: none; padding: 8px 16px; border-radius: 12px; cursor: pointer; font-weight: 600;" aria-label="關閉教師數據面板">✕ 關閉</button>
       </div>
       <div id="dashboard-content" style="font-size: 14px; color: #475569;"></div>
     </div>
@@ -486,11 +486,11 @@
         <span style="font-size:20px;">♿</span>
         <span style="font-weight:700; color:#92400e;">SEN 專屬模式</span>
       </div>
-      <button id="btn-sen-contrast" onclick="toggleSenMode('contrast')" style="padding:8px 16px; border-radius:10px; border:none; font-size:13px; font-weight:600; cursor:pointer; background:#f59e0b; color:white;">高對比</button>
-      <button id="btn-sen-large" onclick="toggleSenMode('largeText')" style="padding:8px 16px; border-radius:10px; border:none; font-size:13px; font-weight:600; cursor:pointer; background:#f59e0b; color:white;">大字體</button>
-      <button id="btn-sen-focus" onclick="toggleSenMode('focusMode')" style="padding:8px 16px; border-radius:10px; border:none; font-size:13px; font-weight:600; cursor:pointer; background:#f59e0b; color:white;">專注模式</button>
-      <button id="btn-sen-speak" onclick="toggleSenMode('autoSpeak')" style="padding:8px 16px; border-radius:10px; border:none; font-size:13px; font-weight:600; cursor:pointer; background:#f59e0b; color:white;">自動朗讀</button>
-      <button onclick="closeSenPanel()" style="padding:8px 14px; border-radius:10px; border:none; font-size:13px; font-weight:600; cursor:pointer; background:#fbbf24; color:#92400e;">✕ 關閉</button>
+<button id="btn-sen-contrast" onclick="toggleSenMode('contrast')" style="padding:8px 16px; border-radius:10px; border:none; font-size:13px; font-weight:600; cursor:pointer; background:#f59e0b; color:white;" aria-label="高對比模式">高對比</button>
+      <button id="btn-sen-large" onclick="toggleSenMode('largeText')" style="padding:8px 16px; border-radius:10px; border:none; font-size:13px; font-weight:600; cursor:pointer; background:#f59e0b; color:white;" aria-label="大字體模式">大字體</button>
+      <button id="btn-sen-focus" onclick="toggleSenMode('focusMode')" style="padding:8px 16px; border-radius:10px; border:none; font-size:13px; font-weight:600; cursor:pointer; background:#f59e0b; color:white;" aria-label="專注模式">專注模式</button>
+      <button id="btn-sen-speak" onclick="toggleSenMode('autoSpeak')" style="padding:8px 16px; border-radius:10px; border:none; font-size:13px; font-weight:600; cursor:pointer; background:#f59e0b; color:white;" aria-label="自動朗讀模式">自動朗讀</button>
+      <button onclick="closeSenPanel()" style="padding:8px 14px; border-radius:10px; border:none; font-size:13px; font-weight:600; cursor:pointer; background:#fbbf24; color:#92400e;" aria-label="關閉SEN面板">✕ 關閉</button>
     </div>
   </div>
 
