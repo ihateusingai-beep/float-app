@@ -676,6 +676,9 @@
             <button onclick="toggleCompareMode(); toggleToolbarOverflow();" id="btn-compare">
               ⚖️ 比較模式
             </button>
+            <button onclick="showExperimentJournal(); toggleToolbarOverflow();" id="btn-journal">
+              📓 實驗日誌
+            </button>
             <button onclick="showAchievementsPanel(); toggleToolbarOverflow();" id="btn-show-achievements">
               🏆 成就面板
             </button>
@@ -888,7 +891,7 @@
     <div class="card" style="margin-top: 24px; padding: 20px 24px;">
       <details open>
         <summary style="cursor: pointer; font-weight: 700; color: #0369a1; font-size: 1.05rem; display: flex; align-items: center; gap: 8px; user-select: none;">
-          <span style="font-size: 22px;">📘</span> 
+          <span style="font-size: 22px;">📘</span>
           <span>為什麼？</span>
         </summary>
         <div style="margin-top: 14px; padding-left: 32px; color: #475569; line-height: 1.7; font-size: 15px;">
@@ -896,6 +899,42 @@
           <p><strong>輕重的秘密：</strong>比較輕的東西會浮在水面上，比較重的東西會沉到水底。</p>
           <p><strong>有趣現象：</strong>不論物體輕重，只要比水輕，就會浮在水面上，而不會沉下去！</p>
           <p style="color: #0284c8; font-size: 14px; margin-top: 6px;">小船雖然很重，但形狀讓它排出很多水，所以產生很大浮力。</p>
+        </div>
+
+        <!-- Density Visualization Bar -->
+        <div id="science-density-viz" style="margin-top: 18px; padding: 16px; background: linear-gradient(135deg, #f0f9ff, #e0f2fe); border-radius: 16px; border: 2px solid #bae6fd;">
+          <div style="font-size: 14px; font-weight: 700; color: #0369a1; margin-bottom: 12px;">📊 密度比較（g/cm³）</div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 12px; color: #64748b; width: 50px;">水</span>
+            <div style="flex: 1; height: 18px; background: #0284c8; border-radius: 9px; position: relative; min-width: 120px;">
+              <div id="water-density-bar" style="position: absolute; left: 0; top: 0; bottom: 0; width: 100%; background: rgba(2,132,199,0.3); border-radius: 9px;"></div>
+              <span style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 700; color: white;">1.0</span>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 12px; color: #64748b; width: 50px;">木塊</span>
+            <div style="flex: 1; height: 18px; background: #0284c8; border-radius: 9px; position: relative; min-width: 120px;">
+              <div class="density-fill" data-density="0.6" style="height: 100%; background: #10b981; border-radius: 9px;"></div>
+              <span style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 700; color: white;">0.6</span>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 12px; color: #64748b; width: 50px;">石頭</span>
+            <div style="flex: 1; height: 18px; background: #0284c8; border-radius: 9px; position: relative; min-width: 120px;">
+              <div class="density-fill" data-density="2.5" style="height: 100%; background: #e11d48; border-radius: 9px;"></div>
+              <span style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 700; color: white;">2.5</span>
+            </div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 12px; color: #64748b; width: 50px;">蘋果</span>
+            <div style="flex: 1; height: 18px; background: #0284c8; border-radius: 9px; position: relative; min-width: 120px;">
+              <div class="density-fill" data-density="0.85" style="height: 100%; background: #10b981; border-radius: 9px;"></div>
+              <span style="position: absolute; right: 6px; top: 50%; transform: translateY(-50%); font-size: 11px; font-weight: 700; color: white;">0.85</span>
+            </div>
+          </div>
+          <div style="font-size: 11px; color: #64748b; margin-top: 10px; padding-top: 10px; border-top: 1px solid #bae6fd;">
+            💡 <strong>技巧：</strong>密度 < 1.0 = 浮起來 &nbsp;|&nbsp; 密度 > 1.0 = 沉下去
+          </div>
         </div>
       </details>
     </div>
@@ -1446,14 +1485,32 @@ function makePrediction(isFloatPrediction) {
       addToPool(item)
       
       const panel = document.getElementById('quiz-panel')
+      
+      // Build misconception explanation if wrong
+      const misconceptionHTML = isCorrect ? '' : `
+        <div style="margin: 16px auto; max-width: 320px; padding: 16px; background: linear-gradient(135deg, #fef3c7, #fff7ed); border-radius: 16px; border: 2px solid #f59e0b; text-align: left;">
+          <div style="font-size: 14px; font-weight: 700; color: #92400e; margin-bottom: 10px;">💡 為什麼會沉/浮？</div>
+          <div style="font-size: 13px; color: #78716c; line-height: 1.6;">
+            <div style="margin-bottom: 8px;">📦 ${item.name} 的密度：<strong style="color:${item.floats?'#059669':'#e11d48'};">${item.density} g/cm³</strong></div>
+            <div style="margin-bottom: 8px;">💧 水的密度：<strong style="color: #0284c8;">1.0 g/cm³</strong></div>
+            <div style="padding-top: 8px; border-top: 1px solid #fde68a; font-size: 12px; color: #92400e;">
+              ${item.floats 
+                ? `✅ ${item.density} < 1.0，所以 ${item.name} 會浮起來！`
+                : `⛔ ${item.density} > 1.0，所以 ${item.name} 會沉下去！`}
+            </div>
+          </div>
+        </div>
+      `
+      
       panel.innerHTML = `
         <div style="text-align:center; padding:12px 0;">
           <div style="font-size:26px; font-weight:700; color:${isCorrect ? '#059669' : '#d97706'}; margin-bottom:16px;">
-            ${isCorrect ? '🎉 答對了！' : '🎉 再試一次！你可以的！'}
+            ${isCorrect ? '🎉 答對了！' : '💪 慢慢來！我們再看一次！'}
           </div>
           <div style="margin-bottom:20px; color:#475569;">
             ${item.name} 其實是 <strong>${item.floats ? '浮起來' : '沉下去'}</strong> 的
           </div>
+          ${misconceptionHTML}
 <button onclick="nextQuizQuestion()"
                   style="background:#0284c8; color:white; padding:12px 32px; border-radius:16px; font-weight:600; border:none; cursor:pointer; font-size:15px;" aria-label="下一題">
             下一題 →
@@ -2161,6 +2218,60 @@ quizTimerInterval = setInterval(() => {
       }, 5000)
     }
 
+    // ==================== Experiment Journal ====================
+    function showExperimentJournal() {
+      const existing = document.getElementById('experiment-journal-modal')
+      if (existing) {
+        existing.remove()
+        return
+      }
+      
+      const history = loadFromLocalStorage('float-history') || []
+      
+      const modal = document.createElement('div')
+      modal.id = 'experiment-journal-modal'
+      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;'
+      modal.setAttribute('role', 'dialog')
+      modal.setAttribute('aria-modal', 'true')
+      modal.setAttribute('aria-labelledby', 'journal-title')
+      
+      const entriesHTML = history.length === 0 
+        ? '<div style="text-align:center;padding:40px;color:#94a3b8;font-size:14px;">尚無實驗記錄<br><span style="font-size:12px;">開始實驗後記錄會顯示在這裡</span></div>'
+        : history.slice(-30).reverse().map(h => {
+            const date = new Date(h.timestamp)
+            const dateStr = `${date.getMonth()+1}/${date.getDate()} ${date.getHours()}:${date.getMinutes().toString().padStart(2,'0')}`
+            return `
+              <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #e2e8f0;">
+                <div style="font-size:32px;">${h.floats ? '🌊' : '⬇️'}</div>
+                <div style="flex:1;">
+                  <div style="font-weight:600;color:#1e2937;font-size:14px;">${h.item}</div>
+                  <div style="font-size:12px;color:#64748b;">${dateStr} · ${h.studentName || '訪客'}</div>
+                </div>
+                <div style="font-size:11px;color:${h.floats?'#059669':'#e11d48'};font-weight:600;">${h.floats?'浮':'沉'}</div>
+              </div>
+            `
+          }).join('')
+      
+      modal.innerHTML = `
+        <div style="background:white;border-radius:24px;max-width:480px;width:94%;max-height:80vh;overflow-y:auto;padding:24px;box-shadow:0 20px 50px rgba(0,0,0,0.25);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+            <h2 id="journal-title" style="margin:0;font-size:1.4rem;color:#0369a1;">📓 實驗日誌</h2>
+            <button onclick="document.getElementById('experiment-journal-modal').remove()" style="background:#e11d48;color:white;border:none;padding:8px 16px;border-radius:10px;font-weight:600;cursor:pointer;" aria-label="關閉">✕</button>
+          </div>
+          <div style="font-size:12px;color:#64748b;margin-bottom:12px;">共 ${history.length} 次實驗記錄</div>
+          <div style="max-height:400px;overflow-y:auto;">
+            ${entriesHTML}
+          </div>
+          ${history.length > 0 ? `
+            <div style="margin-top:14px;padding-top:14px;border-top:2px solid #e0f2fe;text-align:center;">
+              <button onclick="document.getElementById('experiment-journal-modal').remove(); showAchievementsPanel();" style="padding:10px 20px;background:#0284c8;color:white;border:none;border-radius:12px;font-weight:600;cursor:pointer;font-size:13px;" aria-label="查看成就">🏆 查看成就</button>
+            </div>
+          ` : ''}
+        </div>
+      `
+      document.body.appendChild(modal)
+    }
+
     function showAchievementsPanel() {
       const panel = document.getElementById('achievements-panel')
       if (panel) {
@@ -2454,6 +2565,8 @@ quizTimerInterval = setInterval(() => {
     }
 
     // ==================== Quiz Question with TTS ====================
+    let currentPredictionConfidence = 0 // 1-3 stars for metacognition
+
     function showQuizQuestion() {
       const panel = document.getElementById('quiz-panel')
       if (currentQuizIndex >= quizItems.length) {
@@ -2466,6 +2579,9 @@ quizTimerInterval = setInterval(() => {
 
       const difficultyLabels = { easy: '🌱 簡單', medium: '🌿 中等', hard: '🔥 困難' }
       const choiceCount = quizDifficulty === 'easy' ? 2 : quizDifficulty === 'medium' ? 3 : 4
+
+      // Reset confidence for new question
+      currentPredictionConfidence = 0
 
       panel.innerHTML = `
         <div style="text-align:center">
@@ -2506,6 +2622,17 @@ quizTimerInterval = setInterval(() => {
           <div style="font-size:26px; font-weight:700; color:#0369a1; margin-bottom:8px;">${item.name}</div>
           ${item.stars ? `<div style="font-size:16px; color:#f59e0b; margin-bottom:16px;">${'⭐'.repeat(item.stars)} 驚奇度</div>` : '<div style="margin-bottom:16px;"></div>'}
 
+          <!-- Prediction Confidence Bar -->
+          <div id="confidence-bar" style="margin-bottom:16px; padding:12px 16px; background:#f0f9ff; border-radius:16px; border:2px solid #bae6fd;">
+            <div style="font-size:14px; color:#0369a1; font-weight:600; margin-bottom:10px;">💭 你有幾把握？先評估一下！</div>
+            <div style="display:flex; gap:10px; justify-content:center;">
+              <button onclick="setPredictionConfidence(1)" id="conf-btn-1" style="padding:10px 18px; border-radius:12px; border:3px solid #e0f2fe; background:white; font-size:15px; cursor:pointer; min-height:52px;" aria-label="一星把握">⭐ 一星</button>
+              <button onclick="setPredictionConfidence(2)" id="conf-btn-2" style="padding:10px 18px; border-radius:12px; border:3px solid #e0f2fe; background:white; font-size:15px; cursor:pointer; min-height:52px;" aria-label="二星把握">⭐⭐ 二星</button>
+              <button onclick="setPredictionConfidence(3)" id="conf-btn-3" style="padding:10px 18px; border-radius:12px; border:3px solid #e0f2fe; background:white; font-size:15px; cursor:pointer; min-height:52px;" aria-label="三星把握">⭐⭐⭐ 三星</button>
+            </div>
+            <div id="confidence-hint" style="font-size:12px; color:#64748b; margin-top:8px; min-height:18px;"></div>
+          </div>
+
           <div style="display:flex; gap:14px; justify-content:center; flex-wrap:wrap;">
             ${renderQuizChoices(item)}
           </div>
@@ -2515,6 +2642,27 @@ quizTimerInterval = setInterval(() => {
       if (senModes.autoSpeak) {
         setTimeout(() => speakQuizQuestion(item), 500)
       }
+    }
+
+    function setPredictionConfidence(stars) {
+      currentPredictionConfidence = stars
+      // Highlight selected button
+      for (let i = 1; i <= 3; i++) {
+        const btn = document.getElementById('conf-btn-' + i)
+        if (btn) {
+          if (i <= stars) {
+            btn.style.background = '#fef3c7'
+            btn.style.borderColor = '#f59e0b'
+          } else {
+            btn.style.background = 'white'
+            btn.style.borderColor = '#e0f2fe'
+          }
+        }
+      }
+      // Show hint
+      const hints = ['', '🔍 先猜測看看', '🔎 有點把握', '🔬 很有信心！']
+      const hintEl = document.getElementById('confidence-hint')
+      if (hintEl) hintEl.textContent = hints[stars]
     }
 
 function toggleReducedMotion() {
@@ -2619,6 +2767,20 @@ function toggleReducedMotion() {
             }).join('')}
           </div>
         </div>
+
+        <!-- Pool Water Color Customization -->
+        <div style="margin-bottom:20px;">
+          <h3 style="margin:0 0 12px; color:#0369a1;">🎨 水池顏色</h3>
+          <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+            <span style="font-size:13px; color:#64748b;">選擇水色：</span>
+            <button onclick="setPoolColor('#7dd3fc', '#38bdf8', '#0284c8')" id="pool-color-blue" style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, #7dd3fc, #38bdf8); border:3px solid #0284c8; cursor:pointer;" aria-label="藍色水"></button>
+            <button onclick="setPoolColor('#a5f3fc', '#67e8f9', '#06b6d4')" id="pool-color-cyan" style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, #a5f3fc, #67e8f9); border:3px solid #06b6d4; cursor:pointer;" aria-label="青色水"></button>
+            <button onclick="setPoolColor('#bfdbfe', '#93c5fd', '#3b82f6')" id="pool-color-blue2" style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, #bfdbfe, #93c5fd); border:3px solid #3b82f6; cursor:pointer;" aria-label="深藍色水"></button>
+            <button onclick="setPoolColor('#d1fae5', '#6ee7b7', '#10b981')" id="pool-color-green" style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, #d1fae5, #6ee7b7); border:3px solid #10b981; cursor:pointer;" aria-label="綠色水"></button>
+            <button onclick="setPoolColor('#fef3c7', '#fde68a', '#f59e0b')" id="pool-color-yellow" style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, #fef3c7, #fde68a); border:3px solid #f59e0b; cursor:pointer;" aria-label="黃色水"></button>
+            <button onclick="setPoolColor('linear-gradient(to bottom, #c4b5fd, #a78bfa, #7c3aed)')" id="pool-color-purple" style="width:40px; height:40px; border-radius:50%; background:linear-gradient(135deg, #c4b5fd, #a78bfa); border:3px solid #7c3aed; cursor:pointer;" aria-label="紫色水"></button>
+          </div>
+        </div>
         
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
           <button onclick="exportDashboardCSV()" style="padding:12px 20px; background:#0284c8; color:white; border:none; border-radius:12px; font-weight:600; cursor:pointer; font-size:14px;" aria-label="匯出CSV">📥 匯出CSV</button>
@@ -2627,6 +2789,27 @@ function toggleReducedMotion() {
       `
       
       modal.style.display = 'flex'
+    }
+
+    function setPoolColor(topColor, midColor, bottomColor) {
+      const pool = document.getElementById('pool')
+      if (pool) {
+        pool.style.background = `linear-gradient(to bottom, ${topColor} 0%, ${midColor} 35%, ${bottomColor} 100%)`
+        pool.style.borderColor = topColor
+        saveToLocalStorage('float-pool-color', { topColor, midColor, bottomColor })
+        announceToScreenReader('水池顏色已更改')
+      }
+    }
+
+    function loadPoolColor() {
+      const saved = loadFromLocalStorage('float-pool-color')
+      if (saved) {
+        const pool = document.getElementById('pool')
+        if (pool) {
+          pool.style.background = `linear-gradient(to bottom, ${saved.topColor} 0%, ${saved.midColor} 35%, ${saved.bottomColor} 100%)`
+          pool.style.borderColor = saved.topColor
+        }
+      }
     }
 
     function closeTeacherModal() {
@@ -3093,6 +3276,7 @@ document.getElementById('keyboard-hint').style.display = teacherMode ? 'block' :
       initStudentFromStorage()
       renderVoiceNotes()
       renderAchievements()
+      loadPoolColor()
       
       // Show first-time user hint after 1.5s
       setTimeout(showFirstTimeHint, 1500)
