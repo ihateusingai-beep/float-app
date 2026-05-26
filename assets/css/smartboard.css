@@ -1,0 +1,141 @@
+/* Smartboard Projection Mode - Dark High-Contrast Styles */
+
+body.smartboard-mode {
+  background: #0a0a0a !important;
+  color: #ffffff !important;
+}
+
+body.smartboard-mode .card {
+  background: #1a1a1a !important;
+  border: 3px solid #ffffff !important;
+  border-radius: 20px !important;
+}
+
+body.smartboard-mode .stat-card {
+  background: #1a1a1a !important;
+  border: 2px solid #00d4ff !important;
+  border-radius: 16px !important;
+}
+
+body.smartboard-mode h1,
+body.smartboard-mode h2,
+body.smartboard-mode span,
+body.smartboard-mode p,
+body.smartboard-mode div {
+  color: #ffffff !important;
+  background: transparent !important;
+}
+
+body.smartboard-mode h1 {
+  color: #00d4ff !important;
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.5) !important;
+}
+
+body.smartboard-mode button {
+  background: #1a1a1a !important;
+  border: 3px solid #00d4ff !important;
+  color: #00d4ff !important;
+  border-radius: 16px !important;
+  font-weight: 700 !important;
+  font-size: 1.1em !important;
+  padding: 14px 22px !important;
+}
+
+body.smartboard-mode button:hover {
+  background: #00d4ff !important;
+  color: #0a0a0a !important;
+}
+
+body.smartboard-mode button.active,
+body.smartboard-mode button[style*="background: #0284c8"] {
+  background: #00d4ff !important;
+  color: #0a0a0a !important;
+  border-color: #00d4ff !important;
+}
+
+body.smartboard-mode .pool {
+  background: linear-gradient(to bottom, #0c4a6e 0%, #0a2d4a 50%, #061524 100%) !important;
+  border: 6px solid #00d4ff !important;
+  box-shadow: 0 0 40px rgba(0, 212, 255, 0.3), inset 0 0 60px rgba(0, 212, 255, 0.1) !important;
+}
+
+body.smartboard-mode .water-surface {
+  background: linear-gradient(to bottom, rgba(0, 212, 255, 0.4), transparent) !important;
+}
+
+body.smartboard-mode .item-card {
+  background: #1a1a1a !important;
+  border: 3px solid #ffffff !important;
+  border-radius: 16px !important;
+}
+
+body.smartboard-mode .item-card:hover {
+  border-color: #00d4ff !important;
+  box-shadow: 0 0 20px rgba(0, 212, 255, 0.4) !important;
+}
+
+body.smartboard-mode .item-card div:first-child {
+  font-size: 3rem !important;
+}
+
+body.smartboard-mode .item-card div:nth-child(2) {
+  font-size: 1.1em !important;
+  font-weight: 700 !important;
+}
+
+body.smartboard-mode #exp-count,
+body.smartboard-mode #contact-count,
+body.smartboard-mode #sunk-count {
+  color: #00d4ff !important;
+  font-size: 2rem !important;
+}
+
+body.smartboard-mode #pool-count {
+  color: #00d4ff !important;
+  font-weight: 700 !important;
+  font-size: 1.2em !important;
+}
+
+body.smartboard-mode .science-knowledge {
+  background: #1a1a1a !important;
+  border: 3px solid #ffffff !important;
+}
+
+body.smartboard-mode .science-knowledge p {
+  color: #ffffff !important;
+  font-size: 1.3em !important;
+  line-height: 1.8 !important;
+}
+
+body.smartboard-mode #quiz-panel {
+  background: #1a1a1a !important;
+  border: 3px solid #ffffff !important;
+}
+
+body.smartboard-mode #student-info-bar > div {
+  background: #1a1a1a !important;
+  border: 2px solid #00d4ff !important;
+}
+
+body.smartboard-mode #teacher-dashboard {
+  background: #1a1a1a !important;
+  border: 3px solid #00d4ff !important;
+}
+
+body.smartboard-mode #sen-panel > div {
+  background: #1a1a1a !important;
+  border: 3px solid #00d4ff !important;
+}
+
+/* Large text for projection distance viewing */
+body.smartboard-mode {
+  font-size: 1.3em !important;
+}
+
+body.smartboard-mode h1 {
+  font-size: 2.5rem !important;
+}
+
+body.smartboard-mode .pool {
+  min-height: 500px !important;
+}
