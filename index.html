@@ -544,6 +544,11 @@
           <h1 style="margin: 0; font-size: 2.1rem; font-weight: 700; color: #0369a1; letter-spacing: -0.5px;">浮力大發現</h1>
           <p style="margin: 2px 0 0; color: #0284c8; font-size: 0.95rem;">點擊物品，看看它們會浮起來還是沉下去！</p>
         </div>
+        <!-- Milestone Progress Badge -->
+        <div id="milestone-badge" style="display:none; background: linear-gradient(135deg, #fef3c7, #fff7ed); border: 2px solid #f59e0b; border-radius: 14px; padding: 6px 14px; font-size: 12px; color: #92400e; font-weight: 600; margin-left: 12px;" title="距離下一個里程碑">
+          <span id="milestone-badge-icon">🎯</span>
+          <span id="milestone-badge-text">0/5</span>
+        </div>
       </div>
       
 <!-- Consolidated Toolbar -->
@@ -1864,9 +1869,71 @@ quizTimerInterval = setInterval(() => {
           saveToLocalStorage('float-achievements', achievements)
           // Show achievement toast notification
           showAchievementToast(def.icon, '🏆 成就解鎖', def.name)
+          // Auto-show achievements panel briefly (flash it)
+          flashAchievementsPanel()
         }
       }
       renderAchievements()
+    }
+    
+    function flashAchievementsPanel() {
+      const panel = document.getElementById('achievements-panel')
+      if (!panel) return
+      panel.style.display = 'block'
+      panel.style.animation = 'none'
+      panel.offsetHeight // reflow
+      panel.style.animation = 'flash-panel 1s ease-out 2'
+      
+      // Add keyframe if not exists
+      if (!document.getElementById('flash-panel-style')) {
+        const style = document.createElement('style')
+        style.id = 'flash-panel-style'
+        style.textContent = `
+          @keyframes flash-panel {
+            0%, 100% { box-shadow: 0 4px 6px rgb(0 0 0 / 0.1); }
+            50% { box-shadow: 0 4px 6px rgb(0 0 0 / 0.1), 0 0 30px rgba(245,158,11,0.5); }
+          }
+        `
+        document.head.appendChild(style)
+      }
+    }
+
+    function updateMilestoneBadge() {
+      const history = loadFromLocalStorage('float-history') || []
+      const count = history.length
+      const badge = document.getElementById('milestone-badge')
+      if (!badge) return
+      
+      // Show badge if user has done at least 1 experiment
+      if (count === 0) {
+        badge.style.display = 'none'
+        return
+      }
+      
+      badge.style.display = 'flex'
+      badge.style.alignItems = 'center'
+      badge.style.gap = '6px'
+      
+      // Find next milestone
+      const nextMilestone = [1, 5, 10, 20].find(m => m > count) || null
+      
+      if (!nextMilestone) {
+        // All milestones complete!
+        badge.style.background = 'linear-gradient(135deg, #d1fae5, #a7f3d0)'
+        badge.style.borderColor = '#059669'
+        document.getElementById('milestone-badge-icon').textContent = '🏆'
+        document.getElementById('milestone-badge-text').textContent = `${count}次 全部達成！`
+        badge.title = '太棒了！所有里程碑都達成！'
+      } else {
+        const prevMilestone = [1, 5, 10, 20].filter(m => m <= count).pop() || 0
+        badge.style.background = 'linear-gradient(135deg, #fef3c7, #fff7ed)'
+        badge.style.borderColor = '#f59e0b'
+        
+        const icons = { 1: '🌟', 5: '🎉', 10: '🏆', 20: '🚀' }
+        document.getElementById('milestone-badge-icon').textContent = icons[nextMilestone] || '🎯'
+        document.getElementById('milestone-badge-text').textContent = `${count}/${nextMilestone}`
+        badge.title = `距離下一個里程碑（${nextMilestone}次）還差 ${nextMilestone - count} 次`
+      }
     }
 
     function getAchievementBadges(achievements) {
@@ -1970,6 +2037,23 @@ function toggleReducedMotion() {
       const overflowBtn = document.querySelector('.toolbar-overflow-btn')
       if (dropdown && !overflowBtn?.contains(e.target) && !dropdown.contains(e.target)) {
         dropdown.classList.remove('show')
+      }
+    })
+
+    // Keyboard shortcuts
+    document.addEventListener('keydown', (e) => {
+      // Ignore if typing in an input
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
+      
+      const key = e.key.toLowerCase()
+      if (key === 'h') {
+        toggleWhatNextHint()
+      } else if (key === 'd' && !demoMode) {
+        startDemoMode()
+      } else if (key === 'escape') {
+        exitDemoMode()
+        const splash = document.querySelector('.milestone-splash')
+        if (splash) dismissMilestone(splash.querySelector('button'))
       }
     })
 
@@ -2106,6 +2190,8 @@ function toggleReducedMotion() {
       if (achievementId) {
         updateAchievements(achievementId)
       }
+      // Update milestone progress badge
+      updateMilestoneBadge()
     }
 
     function recordQuizResult(score, total, timeElapsed = quizTimeElapsed) {
@@ -2437,6 +2523,9 @@ document.getElementById('keyboard-hint').style.display = teacherMode ? 'block' :
       
       // Show first-time user hint after 1.5s
       setTimeout(showFirstTimeHint, 1500)
+      
+      // Update milestone badge
+      updateMilestoneBadge()
 
       const freeBtn = document.getElementById('btn-free')
       freeBtn.style.background = '#0284c8'
