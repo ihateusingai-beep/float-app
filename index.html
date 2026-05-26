@@ -1559,14 +1559,41 @@ function makePrediction(isFloatPrediction) {
       switchMode('quiz')
     }
 
-    function initStudentFromStorage() {
+function initStudentFromStorage() {
       const student = loadFromLocalStorage('float-student-profile')
+      const achievements = loadFromLocalStorage('float-achievements') || []
+      const history = loadFromLocalStorage('float-history') || []
+
       if (student) {
         currentStudent = student
         document.getElementById('display-student-name').textContent = student.name
         document.getElementById('display-student-grade').textContent = `小三 ${student.grade}`
         document.getElementById('student-info-bar').style.display = 'flex'
+
+        // Show welcome back message for returning students with history
+        if (history.length > 0) {
+          showWelcomeBack(student, achievements.length, history.length)
+        }
       }
+    }
+
+    function showWelcomeBack(student, achievementCount, experimentCount) {
+      const modal = document.createElement('div')
+      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:9999;'
+      modal.setAttribute('role', 'dialog')
+      modal.setAttribute('aria-modal', 'true')
+      modal.innerHTML = `
+        <div style="background:white;border-radius:24px;max-width:360px;width:92%;padding:28px 24px;box-shadow:0 20px 40px rgba(0,0,0,0.2);text-align:center;">
+          <div style="font-size:52px;margin-bottom:8px;">👋</div>
+          <h2 style="margin:0 0 4px;font-size:22px;color:#0369a1;">歡迎回來，${student.name}！</h2>
+          <p style="margin:0 0 16px;color:#64748b;font-size:14px;">你已經做了 ${experimentCount} 次實驗，獲得 ${achievementCount} 個成就</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+            <button onclick="this.closest('[style*=\\"position:fixed\\']').remove(); showAchievementsPanel();" style="padding:12px 20px;background:#0284c8;color:white;border:none;border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;min-height:48px;" aria-label="查看成就">🏆 查看成就</button>
+            <button onclick="this.closest('[style*=\\"position:fixed\\']').remove();" style="padding:12px 20px;background:#e0f2fe;color:#0369a1;border:none;border-radius:14px;font-size:14px;font-weight:600;cursor:pointer;min-height:48px;" aria-label="關閉">繼續實驗</button>
+          </div>
+        </div>
+      `
+      document.body.appendChild(modal)
     }
 
     // ==================== SEN Mode ====================
