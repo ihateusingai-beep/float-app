@@ -538,8 +538,8 @@
         
         <div id="items-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; max-height: 520px; overflow-y: auto; padding-right: 6px;"></div>
         
-        <button onclick="clearPool()" 
-                style="margin-top: 18px; width: 100%; background: #e11d48; color: white; font-weight: 700; padding: 14px 0; border-radius: 18px; border: none; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;">
+<button onclick="clearPool()"
+                style="margin-top: 18px; width: 100%; background: #e11d48; color: white; font-weight: 700; padding: 14px 0; border-radius: 18px; border: none; font-size: 15px; display: flex; align-items: center; justify-content: center; gap: 8px; cursor: pointer;" aria-label="清空水池">
           🗑️ 清空水池
         </button>
 
@@ -628,7 +628,7 @@
         <div style="font-size:14px; color:#0284c8; font-weight:600;">
           📊 <span id="current-score">0</span> 分
         </div>
-        <button onclick="openSenPanel()" style="padding:6px 12px; border-radius:8px; border:none; font-size:12px; font-weight:600; cursor:pointer; background:#fef3c7; color:#92400e;">♿ SEN</button>
+        <button onclick="openSenPanel()" style="padding:6px 12px; border-radius:8px; border:none; font-size:12px; font-weight:600; cursor:pointer; background:#fef3c7; color:#92400e;" aria-label="開啟SEN面板">♿ SEN</button>
       </div>
     </div>
   </div>
@@ -687,7 +687,7 @@
     <div class="teacher-modal" onclick="event.stopPropagation()">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
         <h2 style="margin:0; font-size:1.5rem; color:#0369a1;">👨‍🏫 老師工具面板</h2>
-        <button onclick="closeTeacherModal()" style="background:#e11d48; color:white; border:none; padding:8px 16px; border-radius:12px; cursor:pointer; font-weight:600;">✕ 關閉</button>
+        <button onclick="closeTeacherModal()" style="background:#e11d48; color:white; border:none; padding:8px 16px; border-radius:12px; cursor:pointer; font-weight:600;" aria-label="關閉老師工具面板">✕ 關閉</button>
       </div>
       <div id="teacher-modal-content"></div>
     </div>
@@ -1254,8 +1254,8 @@
       document.querySelectorAll('.tts-speaking').forEach(el => el.classList.remove('tts-speaking'))
     }
 
-    function speakQuizQuestion(item) {
-      const question = `你覺得這個物品會浮還是會沉？`
+function speakQuizQuestion(item) {
+      const question = `你覺得這個物品會浮還是會沉？${item ? item.name : ''}`
       speakText(question, null)
     }
 
@@ -1454,7 +1454,7 @@ function updateAchievements(id) {
             }).join('')}
           </div>
 
-          <button onclick="speakQuizQuestion()" style="padding:8px 14px; border-radius:8px; border:none; font-size:13px; cursor:pointer; background:#fef3c7; color:#92400e; margin-bottom:14px;">
+<button onclick="speakQuizQuestion()" style="padding:8px 14px; border-radius:8px; border:none; font-size:13px; cursor:pointer; background:#fef3c7; color:#92400e; margin-bottom:14px;" aria-label="朗讀題目">
             🔊 朗讀題目
           </button>
 
@@ -1572,8 +1572,8 @@ function toggleReducedMotion() {
         </div>
         
         <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <button onclick="exportDashboardCSV()" style="padding:12px 20px; background:#0284c8; color:white; border:none; border-radius:12px; font-weight:600; cursor:pointer; font-size:14px;">📥 匯出CSV</button>
-          <button onclick="clearAllData()" style="padding:12px 20px; background:#e11d48; color:white; border:none; border-radius:12px; font-weight:600; cursor:pointer; font-size:14px;">🗑️ 清除數據</button>
+          <button onclick="exportDashboardCSV()" style="padding:12px 20px; background:#0284c8; color:white; border:none; border-radius:12px; font-weight:600; cursor:pointer; font-size:14px;" aria-label="匯出CSV">📥 匯出CSV</button>
+          <button onclick="clearAllData()" style="padding:12px 20px; background:#e11d48; color:white; border:none; border-radius:12px; font-weight:600; cursor:pointer; font-size:14px;" aria-label="清除數據">🗑️ 清除數據</button>
         </div>
       `
       
@@ -1737,8 +1737,8 @@ document.getElementById('keyboard-hint').style.display = teacherMode ? 'block' :
 
       content.innerHTML = `
         <div style="margin-bottom: 20px; display: flex; gap: 10px; flex-wrap: wrap;">
-          <button onclick="exportDashboardCSV()" style="padding: 10px 18px; background: #0284c8; color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 14px;">📥 匯出 CSV</button>
-          <button onclick="clearAllData()" style="padding: 10px 18px; background: #e11d48; color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 14px;">🗑️ 清除所有數據</button>
+          <button onclick="exportDashboardCSV()" style="padding: 10px 18px; background: #0284c8; color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 14px;" aria-label="匯出CSV">📥 匯出 CSV</button>
+          <button onclick="clearAllData()" style="padding: 10px 18px; background: #e11d48; color: white; border: none; border-radius: 12px; font-weight: 600; cursor: pointer; font-size: 14px;" aria-label="清除所有數據">🗑️ 清除所有數據</button>
           <label style="display: flex; align-items: center; gap: 8px; padding: 10px 16px; background: #f0f9ff; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600; color: #0284c8;">
             <input type="checkbox" id="auto-smartboard-toggle" onchange="toggleAutoSmartboard(this.checked)" ${localStorage.getItem('float-auto-smartboard') === 'true' ? 'checked' : ''} style="width: 16px; height: 16px; cursor: pointer;">
             🖥️ 教師模式自動開啟投影
