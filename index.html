@@ -657,7 +657,7 @@
 
   <!-- Keyboard shortcuts hint -->
   <div id="keyboard-hint" style="display: none; background: #f0f9ff; border: 1px solid #bae6fd; border-radius: 12px; padding: 10px 16px; margin-bottom: 16px; font-size: 13px; color: #0369a1;">
-    <strong>⌨️ 鍵盤快捷鍵：</strong> Tab 移動物品 ｜ Enter 或 空格 選擇 ｜ Esc 關閉彈窗
+    <strong>⌨️ 鍵盤快捷鍵：</strong> Tab 移動 ｜ Enter/空格 選擇 ｜ Esc 關閉彈窗 ｜ H 提示 ｜ D 示範模式
   </div>
 
     <!-- Stats -->
@@ -1581,6 +1581,45 @@ quizTimerInterval = setInterval(() => {
       { count: 20, emoji: '🚀', title: '實驗冠軍', name: '20次實驗！', sub: '太厲害了！繼續探索！' }
     ]
 
+    function spawnConfetti() {
+      const colors = ['#f59e0b', '#0284c8', '#10b981', '#e11d48', '#7c3aed', '#fbbf24']
+      const shapes = ['●', '■', '▲', '★', '◆']
+      for (let i = 0; i < 40; i++) {
+        const particle = document.createElement('div')
+        particle.textContent = shapes[Math.floor(Math.random() * shapes.length)]
+        const rotation = 360 + Math.random() * 720
+        const duration = 1.5 + Math.random() * 1.5
+        const delay = Math.random() * 0.3
+        const startX = 20 + Math.random() * 60
+        const color = colors[Math.floor(Math.random() * colors.length)]
+        const size = 12 + Math.random() * 16
+        particle.style.cssText = `
+          position: fixed !important;
+          left: ${startX}% !important;
+          top: -20px !important;
+          font-size: ${size}px !important;
+          color: ${color} !important;
+          z-index: 999999 !important;
+          pointer-events: none !important;
+          animation: confetti-fall-${i} ${duration}s ease-out forwards !important;
+          animation-delay: ${delay}s !important;
+        `
+        document.body.appendChild(particle)
+        setTimeout(() => particle.remove(), 4000)
+        
+        // Add unique keyframe for this particle
+        const style = document.createElement('style')
+        style.textContent = `
+          @keyframes confetti-fall-${i} {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) rotate(${rotation}deg); opacity: 0; }
+          }
+        `
+        document.head.appendChild(style)
+        setTimeout(() => style.remove(), 4000)
+      }
+    }
+
     function checkMilestone(totalExperiments) {
       const milestone = MILESTONES.find(m => m.count === totalExperiments)
       if (!milestone) return
@@ -1613,6 +1652,9 @@ quizTimerInterval = setInterval(() => {
         osc.start()
         osc.stop(audioCtx.currentTime + 0.5)
       } catch(e) { /* Audio not supported */ }
+      
+      // Spawn confetti particles
+      spawnConfetti()
       
       // Auto-dismiss after 4 seconds if no interaction
       splash.autoTimeout = setTimeout(() => dismissMilestone(splash.querySelector('button')), 4000)
